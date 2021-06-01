@@ -40,9 +40,8 @@ import {
 
 import { keys, isArray, createArray, createObject } from './lib'
 
-const trim = (v: string): string => v.trim()
 const normalizeValue = (v: string): string =>
-  trim(v)
+  v
     .replace(/&amp;/gi, '&')
     .replace(/&lt;/gi, '<')
     .replace(/&gt;/gi, '>')
@@ -95,14 +94,14 @@ export default (source: string): any => {
   // prettier-ignore
   const saveString = (): void => { superSet(normalizeValue(content)), clear() }
   // prettier-ignore
-  const saveInteger = (): void => { superSet(parseInt(trim(content))), clear() }
+  const saveInteger = (): void => { superSet(parseInt(content)), clear() }
   // prettier-ignore
-  const saveReal = (): void => { superSet(parseFloat(trim(content))), clear() }
+  const saveReal = (): void => { superSet(parseFloat(content)), clear() }
   // prettier-ignore
-  const saveDate = (): void => { superSet(new Date(trim(content))), clear() }
+  const saveDate = (): void => { superSet(new Date(content.trim())), clear() }
   // prettier-ignore
   const saveData = (): void =>
-  { superSet({ [__PLIST_DATA_KEY__]: trim(content) }), clear() }
+  { superSet({ [__PLIST_DATA_KEY__]: content.trim() }), clear() }
   // prettier-ignore
   const saveBoolean = (bool: boolean): void => { !tag && superSet(bool) }
 
