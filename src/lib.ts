@@ -20,6 +20,13 @@ const Obj = Object
 
 export const keys = Obj.keys
 
+export const repeat = (string: string, count?: number): string => {
+  let res = __EMPTY__
+  count = -~count! || 0
+  while (--count > 0) res += string
+  return res
+}
+
 const setComments = <T>(v: T): T => (
   Obj.defineProperty(v, __PLIST_COMMENTS_KEY__, {
     enumerable: false,
@@ -44,4 +51,4 @@ export const isObject = (v: any): boolean =>
 export const stringify = JSON.stringify
 
 export const setIndent = (indent: string, deep: number): string =>
-  !indent ? '' : indent.repeat(deep > 0 ? deep : 0)
+  !indent ? '' : repeat(indent, deep)

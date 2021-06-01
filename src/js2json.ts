@@ -1,5 +1,6 @@
 import {
   keys,
+  repeat,
   isArray,
   isObject,
   setIndent,
@@ -90,7 +91,7 @@ export default (source: any, indent: number | string = 2): string =>
     !indent
       ? __EMPTY__
       : indent === +indent
-        ? ' '.repeat(indent)
+        ? repeat(' ', indent)
         : __EMPTY__ + indent,
     0
   )
