@@ -1,0 +1,72 @@
+{
+  "name": "plist2",
+  "version": "1.0.0",
+  "description": "Converts between .tmLanguage(.plist), .json and .yaml formats",
+  "author": "wareset <git@wareset.com>",
+  "homepage": "https://github.com/wareset/plist2#readme",
+  "license": "MIT",
+  "main": "index",
+  "module": "index.mjs",
+  "types": "index.d.ts",
+  "bin": {
+    "plist2": "plist2"
+  },
+  "files": [
+    "README.md",
+    "__types__",
+    "cli",
+    "index.d.ts",
+    "index.js",
+    "index.mjs",
+    "js2json",
+    "js2plist",
+    "js2yaml",
+    "json2js",
+    "json2plist",
+    "json2yaml",
+    "lib",
+    "plist2js",
+    "plist2json",
+    "plist2yaml",
+    "yaml2js",
+    "yaml2json",
+    "yaml2plist"
+  ],
+  "keywords": [
+    "plist",
+    "json",
+    "yaml",
+    "plist2json",
+    "plist2yaml",
+    "json2plist",
+    "yaml2plist",
+    "tmLanguage"
+  ],
+  "scripts": {
+    "dester": "dester ./src ./ --babel",
+    "build": "npm run -s dester -- -s",
+    "dev": "npm run -s dester -- -w --no-r",
+    "pkg:name": "cat package.json | grep '\"name\":' | cut -d '\"' -f4",
+    "pkg:version": "cat package.json | grep '\"version\":' | cut -d '\"' -f4",
+    "git:get:tag": "echo $(npm run -s pkg:name)@$(npm run -s pkg:version)",
+    "git:set:tag": "t=$(npm run -s git:get:tag) && git tag -a $t -m $t",
+    "git:commit": "npm run -s build && git add . && read -p 'Commit: ' c; c=${c:-v$(npm run -s pkg:version)} && n=$(npm run -s pkg:name) && git commit -m \"$n: $c\"",
+    "commit": "read -p 'Version [patch]: ' V; V=${V:-patch} && npm version --force --no-git-tag-version $V; echo $V && read -p 'Push? (y/N): ' G && read -p 'Publish? (y/N): ' P && npm run -s git:commit && case $G in Y|y) $(git push);; esac && case $P in Y|y) $(npm run -s git:set:tag && git push --tags && npm -s publish);; esac"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wareset/plist2.git"
+  },
+  "bugs": {
+    "url": "https://github.com/wareset/plist2/issues"
+  },
+  "devDependencies": {
+    "@babel/core": "^7.13.16",
+    "@babel/plugin-transform-block-scoping": "^7.13.16",
+    "dester": "0.x",
+    "typescript": "4.x"
+  },
+  "dependencies": {
+    "yaml": "^1.10.2"
+  }
+}
