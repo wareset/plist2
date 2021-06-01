@@ -1,6 +1,6 @@
 {
   "name": "plist2",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Converts between .tmLanguage(.plist), .json and .yaml formats",
   "author": "wareset <git@wareset.com>",
   "homepage": "https://github.com/wareset/plist2#readme",

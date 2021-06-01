@@ -166,10 +166,10 @@ If the library is installed globally:
 plist2 somefile.yaml somefile.plist # create somefile.plist
 
 # or yaml->plist
-plist2 somefile.YML-TEST tmLanguage # create somefile.yml-some.tmLanguage
+plist2 somefile.YML-TEST tmLanguage # create somefile.YML-TEST.tmLanguage
 
 # or plist->json
-plist2 somefile.plist json # create somefile.plist.json
+plist2 somefile.plist .json # create somefile.plist.json
 
 # or json->yaml
 plist2 somefile.json ./folder/newfile.yml # create ./folder/newfile.yml
