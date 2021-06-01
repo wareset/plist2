@@ -83,11 +83,11 @@ const sourcePlist = `
 <!DOCTYPE plist PUBLIC "-//Apple Computer//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
   <dict>
-    <key>data-example</key>
+    <key>dataExample</key>
     <data>cGxpc3Qy</data>
 
     <!-- Comment example -->
-    <key>date</key>
+    <key>dateExample</key>
     <date>2021-12-21T00:00:00Z</date>
 
     <key>array</key>
@@ -104,17 +104,16 @@ const sourcePlist = `
     <key>boolean</key>
     <true/>
 
-    <key>number-integer</key>
+    <key>numberInteger</key>
     <integer>234</integer>
-    <key>number-float</key>
+    <key>numberFloat</key>
     <real>234.656</real>
 
     <key>incorrect values and tags (it will also work)</key>
     <array12345>
       <integer>234.23445</integer>
-      <true>
-      <TRUE/>
-      <FaLsE/>
+      </true>
+      <FALSE>
     </ARRAY>
 
   </dict>
@@ -126,28 +125,38 @@ console.log(res)
 // Result:
 expect(res).toEqual({
   // You have to deal with the `base64` data yourself
-  'data-example': { __plistData__: 'cGxpc3Qy' },
-
-  date: new Date('2021-12-21T00:00:00Z'),
-
+  dataExample: { __plistData__: 'cGxpc3Qy' },
+  dateExample: new Date('2021-12-21T00:00:00Z'),
   array: ['foobar' /* __plistComments__: { 0: ['comment in tag'] } */],
-
   object: { key: 'value' },
-
   boolean: true,
-
-  'number-integer': 234,
-  'number-float': 234.656,
-
+  numberInteger: 234,
+  numberFloat: 234.656,
   // Even the wrong data was processed
-  'incorrect values and tags (it will also work)': [234, true, true, false],
-
+  'incorrect values and tags (it will also work)': [234, true, false],
   // This is a hidden object with comments.
   // It will not be displayed when converting to a `JSON` and `YAML`
   __plistComments__: {
     date: [' Comment example ']
   }
 })
+
+console.log(js2json(res)) // see below
+```
+
+Result json:
+
+```json
+{
+  "dataExample": "cGxpc3Qy",
+  "dateExample": "2021-12-21T00:00:00.000Z",
+  "array": ["foobar"],
+  "object": { "key": "value" },
+  "boolean": true,
+  "numberInteger": 234,
+  "numberFloat": 234.656,
+  "incorrect values and tags (it will also work)": [234, true, false]
+}
 ```
 
 ---
