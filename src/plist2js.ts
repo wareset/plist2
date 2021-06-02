@@ -42,6 +42,7 @@ import { keys, isArray, createArray, createObject } from './lib'
 
 const normalizeValue = (v: string): string =>
   v
+    .replace(/^\s*\n\s*|\s*\n\s*$/g, '')
     .replace(/&amp;/gi, '&')
     .replace(/&lt;/gi, '<')
     .replace(/&gt;/gi, '>')

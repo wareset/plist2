@@ -90,6 +90,14 @@ const sourcePlist = `
     <key>dateExample</key>
     <date>2021-12-21T00:00:00Z</date>
 
+    <key>  string1  </key>
+    <string>  not trim this string and key  </string>
+
+    <key>
+      string2  </key>
+    <string>  partially trim this string and key  
+    </string>
+
     <key>array</key>
     <array>
       <string>foo<!--comment in tag-->bar</string>
@@ -127,6 +135,10 @@ expect(res).toEqual({
   // You have to deal with the `base64` data yourself
   dataExample: { __plistData__: 'cGxpc3Qy' },
   dateExample: new Date('2021-12-21T00:00:00Z'),
+  // not trim - if the tag is on the same line
+  "  string1  ": "  not trim this string and key  ",
+  // trim - if the tag was moved
+  "string2  ": "  partially trim this string and key",
   array: ['foobar' /* __plistComments__: { 0: ['comment in tag'] } */],
   object: { key: 'value' },
   boolean: true,
@@ -137,7 +149,7 @@ expect(res).toEqual({
   // This is a hidden object with comments.
   // It will not be displayed when converting to a `JSON` and `YAML`
   __plistComments__: {
-    date: [' Comment example ']
+    dateExample: [' Comment example ']
   }
 })
 
@@ -147,9 +159,11 @@ console.log(js2json(res)) // see below
 Result json:
 
 ```json
-{
+main-tmlang2.js:59 {
   "dataExample": "cGxpc3Qy",
   "dateExample": "2021-12-21T00:00:00.000Z",
+  "  string1  ": "  not trim this string and key  ",
+  "string2  ": "  partially trim this string and key",
   "array": ["foobar"],
   "object": { "key": "value" },
   "boolean": true,
