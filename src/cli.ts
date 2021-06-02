@@ -3,12 +3,10 @@
 import fs from 'fs'
 import path from 'path'
 
+const regex = /^\.(json|ya?ml).*/i
 const getExt = (v: string): string => {
   const ext = path.extname(v) || '.' + path.basename(v)
-  const file = (/^\.(json|ya?ml).*/i.exec(ext) || [
-    '',
-    'plist'
-  ])[1].toLowerCase()
+  const file = (ext.match(regex) || ['', 'plist'])[1].toLowerCase()
   // console.log('ext: ' + ext, file)
   return file === 'yml' ? 'yaml' : file
 }
