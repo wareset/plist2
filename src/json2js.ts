@@ -1,1 +1,3 @@
-export default (source: string): any => JSON.parse(source)
+import { jsonParse } from './lib'
+
+export default (source: string): any => jsonParse(source)

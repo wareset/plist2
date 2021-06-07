@@ -1,3 +1,6 @@
+/* eslint-disable security/detect-unsafe-regex */
+/* eslint-disable security/detect-non-literal-regexp */
+
 export const __EMPTY__ = ''
 // plist | key
 // array | data | date | dict | real | integer | string | true | false
@@ -13,10 +16,14 @@ export const __DATA__ = 'data'
 export const __TRUE__ = 'true'
 export const __FALSE__ = 'false'
 
-export const __PLIST_COMMENTS_KEY__ = '__plistComments__'
-export const __PLIST_DATA_KEY__ = '__plistData__'
+export const __COMMENTS_KEY__ = '%comments%'
+export const __BINARY64_KEY__ = '%binary64%'
 
 const Obj = Object
+
+export const REG_CRLF = '[\\r\\n\\u2028\\u2029]'
+export const regexp = (pattern: (string | RegExp)[], flags: string): RegExp =>
+  new RegExp(pattern.map((v: any) => v.source || v).join(__EMPTY__), flags)
 
 export const keys = Obj.keys
 
@@ -27,16 +34,18 @@ export const repeat = (string: string, count?: number): string => {
   return res
 }
 
-const setComments = <T>(v: T): T => (
-  Obj.defineProperty(v, __PLIST_COMMENTS_KEY__, {
+export const setComments = <T>(v: T, value = {}): T => (
+  Obj.defineProperty(v, __COMMENTS_KEY__, {
+    configurable: true,
     enumerable: false,
-    value: {}
+    writable: true,
+    value
   }),
   v
 )
 
 const create = Obj.create
-export const createArray = (): any => setComments([])
+export const createArray = (): any => setComments([], [])
 export const createObject = create
   ? (): any => setComments(create(null))
   : (): any => setComments({})
@@ -45,10 +54,25 @@ const getPrototypeOf = Obj.getPrototypeOf || ((v: any): any => v.__proto__)
 export const isArray = Array.isArray
 export const isObject = (v: any): boolean =>
   v != null &&
-  !v[__PLIST_DATA_KEY__] &&
+  // !v[__BINARY64_KEY__] &&
   (!(v = getPrototypeOf(v)) || v.constructor === Obj)
 
-export const stringify = JSON.stringify
+export const jsonStringify = JSON.stringify
+export const jsonParse = JSON.parse
 
 export const setIndent = (indent: string, deep: number): string =>
   !indent ? '' : repeat(indent, deep)
+
+// prettier-ignore
+export const changeYamlIndentOnString = (
+  yaml: string,
+  indent: string | number
+): string => (
+  (yaml = yaml.trim().replace(/[\r\n\u2028\u2029]\s*"%binary64%":\s*/g, ' !!binary ')),
+  indent === +indent
+    ? yaml
+    : yaml.replace(
+      /(^|\r\n?|\n|\u2028|\u2029)( {2,2})+/g,
+      (_, n, s) => n + repeat(indent as string, s.length / 2)
+    )
+)

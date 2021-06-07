@@ -1,4 +1,8 @@
-import { stringify } from 'yaml'
+import { changeYamlIndentOnString } from './lib'
+import { stringify as yamlStringify } from 'yaml'
 
-export default (source: string, indent = 2): string =>
-  stringify(source, { indent })
+export default (source: any, indent: number | string = 2): string =>
+  changeYamlIndentOnString(
+    yamlStringify(source, { indent: indent === +indent ? indent : 2 }),
+    indent
+  )

@@ -4,10 +4,10 @@ import {
   isArray,
   isObject,
   setIndent,
-  stringify,
+  jsonStringify,
   __EMPTY__,
-  __PLIST_COMMENTS_KEY__,
-  __PLIST_DATA_KEY__
+  __COMMENTS_KEY__,
+  __BINARY64_KEY__
 } from './lib'
 
 const __js2json__ = (source: any, indent: string, deep: number): string => {
@@ -22,13 +22,6 @@ const __js2json__ = (source: any, indent: string, deep: number): string => {
   const arr: any = []
 
   if (isArray(source)) {
-    // if (source.some((v) => isArray(v) || isObject(v))) {
-    //   INDENT = setIndent(indent, deep)
-    //   NEW_LINE = indent ? '\n' : __EMPTY__
-    //   INDENT_LAST = setIndent(indent, deep - 1)
-    //   SEPARATOR = __EMPTY__
-    // }
-
     source.forEach((v) => {
       if (!isMod && (isArray(v) || isObject(v))) {
         isMod = true
@@ -47,16 +40,10 @@ const __js2json__ = (source: any, indent: string, deep: number): string => {
       INDENT_LAST +
       ']'
   } else if (isObject(source)) {
-    const sKeys = keys(source)
     NEW_LINE = SEPARATOR
-    // if (sKeys.some((k) => isArray(source[k]) || isObject(source[k]))) {
-    //   INDENT = setIndent(indent, deep)
-    //   NEW_LINE = indent ? '\n' : __EMPTY__
-    //   INDENT_LAST = setIndent(indent, deep - 1)
-    // }
 
-    sKeys.forEach((k) => {
-      if (k !== __PLIST_COMMENTS_KEY__) {
+    keys(source).forEach((k) => {
+      if (k !== __COMMENTS_KEY__) {
         if (!isMod && (isArray(source[k]) || isObject(source[k]))) {
           isMod = true
           INDENT = setIndent(indent, deep)
@@ -64,7 +51,7 @@ const __js2json__ = (source: any, indent: string, deep: number): string => {
           INDENT_LAST = setIndent(indent, deep - 1)
         }
 
-        arr.push([stringify(k) + ':', __js2json__(source[k], indent, deep)])
+        arr.push([jsonStringify(k) + ':', __js2json__(source[k], indent, deep)])
       }
     })
     res =
@@ -75,10 +62,18 @@ const __js2json__ = (source: any, indent: string, deep: number): string => {
       NEW_LINE +
       INDENT_LAST +
       '}'
-  } else if (source && source[__PLIST_DATA_KEY__]) {
-    res = stringify(source[__PLIST_DATA_KEY__])
+    // } else if (source && source[__BINARY64_KEY__]) {
+    //   res =
+    //     '{' +
+    //     SEPARATOR +
+    //     jsonStringify(__BINARY64_KEY__) +
+    //     ':' +
+    //     SEPARATOR +
+    //     jsonStringify(source[__BINARY64_KEY__]) +
+    //     SEPARATOR +
+    //     '}'
   } else {
-    res = stringify(source, null, indent)
+    res = jsonStringify(source, null, indent)
   }
 
   return res

@@ -3,7 +3,7 @@
 import fs from 'fs'
 import path from 'path'
 
-const regex = /^\.(json|ya?ml).*/i
+const regex = /^\.((?:j|c)son|ya?ml).*/i
 const getExt = (v: string): string => {
   const ext = path.extname(v) || '.' + path.basename(v)
   const file = (ext.match(regex) || ['', 'plist'])[1].toLowerCase()
@@ -30,20 +30,43 @@ const outputExt = getExt(output)
 // console.log(inputExt)
 // console.log(outputExt)
 
+import { cson2js, js2cson } from '.'
 import { json2js, js2json } from '.'
 import { plist2js, js2plist } from '.'
 import { yaml2js, js2yaml } from '.'
 import {
+  cson2json,
+  cson2plist,
+  cson2yaml,
+  json2cson,
   json2plist,
   json2yaml,
+  plist2cson,
   plist2json,
   plist2yaml,
+  yaml2cson,
   yaml2json,
   yaml2plist
 } from '.'
 
 let parser!: Function
 switch (inputExt + '2' + outputExt) {
+  case 'cson2json':
+    parser = cson2json
+    break
+  case 'cson2plist':
+    parser = cson2plist
+    break
+  case 'cson2yaml':
+    parser = cson2yaml
+    break
+  case 'cson2cson':
+    parser = (source: string): string => js2cson(cson2js(source))
+    break
+
+  case 'json2cson':
+    parser = json2cson
+    break
   case 'json2plist':
     parser = json2plist
     break
@@ -54,6 +77,9 @@ switch (inputExt + '2' + outputExt) {
     parser = (source: string): string => js2json(json2js(source))
     break
 
+  case 'plist2cson':
+    parser = plist2cson
+    break
   case 'plist2json':
     parser = plist2json
     break
@@ -64,6 +90,9 @@ switch (inputExt + '2' + outputExt) {
     parser = (source: string): string => js2plist(plist2js(source))
     break
 
+  case 'yaml2cson':
+    parser = yaml2cson
+    break
   case 'yaml2json':
     parser = yaml2json
     break

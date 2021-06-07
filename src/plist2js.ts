@@ -34,20 +34,31 @@ import {
   __DATA__,
   __TRUE__,
   __FALSE__,
-  __PLIST_COMMENTS_KEY__,
-  __PLIST_DATA_KEY__
+  __COMMENTS_KEY__,
+  __BINARY64_KEY__
 } from './lib'
 
-import { keys, isArray, createArray, createObject } from './lib'
+import {
+  keys,
+  REG_CRLF,
+  regexp,
+  // jsonStringify,
+  isArray,
+  createArray,
+  createObject
+} from './lib'
+
+// /^\s*[\r\n\u2028\u2029]\s*|\s*[\r\n\u2028\u2029]\s*$/g
+const reg1 = regexp(['^\\s*', REG_CRLF, '\\s*|\\s*', REG_CRLF, '\\s*$'], 'g')
 
 const normalizeValue = (v: string): string =>
   v
-    .replace(/^\s*\n\s*|\s*\n\s*$/g, '')
-    .replace(/&amp;/gi, '&')
-    .replace(/&lt;/gi, '<')
-    .replace(/&gt;/gi, '>')
-    .replace(/&quot;/gi, '"')
-    .replace(/&apos;/gi, "'")
+    .replace(reg1, '')
+    .replace(/&lt;/g, '<')
+    .replace(/&gt;/g, '>')
+    .replace(/&amp;/g, '&')
+    .replace(/&quot;/g, '"')
+    .replace(/&apos;/g, "'")
 
 export default (source: string): any => {
   const plist: any = createArray()
@@ -79,7 +90,7 @@ export default (source: string): any => {
 
   const saveComment = (_comment: string): void => {
     _comment = _comment.slice(4, -3)
-    const __comments__ = ENV[__PLIST_COMMENTS_KEY__]
+    const __comments__ = ENV[__COMMENTS_KEY__]
     const id = isArray(ENV) ? ENV.length : key
     if (!(id in __comments__)) __comments__[id] = [_comment]
     else __comments__[id].push(_comment)
@@ -87,9 +98,9 @@ export default (source: string): any => {
 
   const saveKey = (): void => {
     ;(key = normalizeValue(content)), clear()
-    if (__EMPTY__ in ENV[__PLIST_COMMENTS_KEY__]) {
-      ENV[__PLIST_COMMENTS_KEY__][key] = ENV[__PLIST_COMMENTS_KEY__][__EMPTY__]
-      delete ENV[__PLIST_COMMENTS_KEY__][__EMPTY__]
+    if (__EMPTY__ in ENV[__COMMENTS_KEY__]) {
+      ENV[__COMMENTS_KEY__][key] = ENV[__COMMENTS_KEY__][__EMPTY__]
+      delete ENV[__COMMENTS_KEY__][__EMPTY__]
     }
   }
   // prettier-ignore
@@ -102,7 +113,10 @@ export default (source: string): any => {
   const saveDate = (): void => { superSet(new Date(content.trim())), clear() }
   // prettier-ignore
   const saveData = (): void =>
-  { superSet({ [__PLIST_DATA_KEY__]: content.trim() }), clear() }
+  { superSet({
+    [__BINARY64_KEY__]: content.trim()
+    // toJSON(): string { return jsonStringify(this[__BINARY64_KEY__]) }
+  }), clear() }
   // prettier-ignore
   const saveBoolean = (bool: boolean): void => { !tag && superSet(bool) }
 
@@ -165,13 +179,13 @@ export default (source: string): any => {
   if (plist.length === 1) {
     res = plist[0]
 
-    keys(plist[__PLIST_COMMENTS_KEY__]).forEach((key: string) => {
-      if (!res[__PLIST_COMMENTS_KEY__][key]) {
-        res[__PLIST_COMMENTS_KEY__][key] = plist[__PLIST_COMMENTS_KEY__][key]
+    keys(plist[__COMMENTS_KEY__]).forEach((key: string) => {
+      if (!res[__COMMENTS_KEY__][key]) {
+        res[__COMMENTS_KEY__][key] = plist[__COMMENTS_KEY__][key]
       } else {
-        res[__PLIST_COMMENTS_KEY__][key][
-          key !== __EMPTY__ ? 'unshift' : 'push'
-        ](...plist[__PLIST_COMMENTS_KEY__][key])
+        res[__COMMENTS_KEY__][key][key !== __EMPTY__ ? 'unshift' : 'push'](
+          ...plist[__COMMENTS_KEY__][key]
+        )
       }
     })
   }
