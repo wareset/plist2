@@ -99,7 +99,7 @@ export default (source: string): any => {
 
   let deep = -1
   source.replace(
-    /('''|'|")(?:[^\\]|\\\1|\\(?!\1).)*?\1|(:)|([,{}[\]])|(#[^\r\n\u2028\u2029]*)|(\s+)|([^\r\n\u2028\u2029,'"#:{}[\]]+)/g,
+    /('''|'|")(?:[^\\]|\\\1|\\(?!\1).)*?(?:\1|$)|(:)|([,{}[\]])|(#[^\r\n\u2028\u2029]*)|(\s+)|([^\r\n\u2028\u2029,'"#:{}[\]]+)/g,
     (_result, _string, _colon, _punct, _comment, _space, _other) => {
       // console.log({ _result, _space, _string, _comment, _punct, _other })
 
