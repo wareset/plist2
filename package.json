@@ -1,16 +1,39 @@
 {
   "name": "plist2",
-  "version": "1.1.1",
+  "version": "1.1.2",
   "description": "Converts between .tmLanguage(.plist), .json, .cson and .yaml formats",
-  "author": "wareset <git@wareset.com>",
-  "homepage": "https://github.com/wareset/plist2#readme",
+  "keywords": [
+    "plist",
+    "json",
+    "cson",
+    "yaml",
+    "tmLanguage",
+    "cson2json",
+    "cson2plist",
+    "cson2yaml",
+    "json2cson",
+    "json2plist",
+    "json2yaml",
+    "plist2cson",
+    "plist2json",
+    "plist2yaml",
+    "yaml2cson",
+    "yaml2json",
+    "yaml2plist"
+  ],
   "license": "MIT",
+  "homepage": "https://github.com/wareset/plist2#readme",
+  "bugs": {
+    "url": "https://github.com/wareset/plist2/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/wareset/plist2.git"
+  },
+  "author": "wareset <git@wareset.com>",
   "main": "index",
   "module": "index.mjs",
   "types": "index.d.ts",
-  "bin": {
-    "plist2": "plist2"
-  },
   "files": [
     "README.md",
     "__types__",
@@ -40,25 +63,9 @@
     "yaml2json",
     "yaml2plist"
   ],
-  "keywords": [
-    "plist",
-    "json",
-    "cson",
-    "yaml",
-    "tmLanguage",
-    "cson2json",
-    "cson2plist",
-    "cson2yaml",
-    "json2cson",
-    "json2plist",
-    "json2yaml",
-    "plist2cson",
-    "plist2json",
-    "plist2yaml",
-    "yaml2cson",
-    "yaml2json",
-    "yaml2plist"
-  ],
+  "bin": {
+    "plist2": "plist2"
+  },
   "scripts": {
     "dester": "dester ./src ./ --babel",
     "build": "npm run -s dester -- -s",
@@ -69,13 +76,6 @@
     "git:set:tag": "t=$(npm run -s git:get:tag) && git tag -a $t -m $t",
     "git:commit": "npm run -s build && git add . && read -p 'Commit: ' c; c=${c:-v$(npm run -s pkg:version)} && n=$(npm run -s pkg:name) && git commit -m \"$n: $c\"",
     "commit": "read -p 'Version [patch]: ' V; V=${V:-patch} && npm version --force --no-git-tag-version $V; echo $V && read -p 'Push? (y/N): ' G && read -p 'Publish? (y/N): ' P && npm run -s git:commit && case $G in Y|y) $(git push);; esac && case $P in Y|y) $(npm run -s git:set:tag && git push --tags && npm -s publish);; esac"
-  },
-  "repository": {
-    "type": "git",
-    "url": "git+https://github.com/wareset/plist2.git"
-  },
-  "bugs": {
-    "url": "https://github.com/wareset/plist2/issues"
   },
   "devDependencies": {
     "@babel/core": "^7.13.16",
