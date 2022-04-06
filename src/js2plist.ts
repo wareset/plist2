@@ -17,8 +17,6 @@ import {
   __BINARY64_KEY__
 } from './lib'
 
-const instanceOf = (a: any, b: Function): a is typeof b => a instanceof b
-
 const normalizeString = (value: any): string =>
   (__EMPTY__ + value).trim().replace(/</g, '&lt;').replace(/>/g, '&gt;')
 // .replace(/"/gi, '&quot;')
@@ -43,7 +41,7 @@ const __js2plist__ = (source: any, indent: string, deep: number): string => {
 
   let res = __EMPTY__
   if (isArray(source)) {
-    const comments: any = { ...((source as any)[__COMMENTS_KEY__] || {}) }
+    const comments: any = { ...(source as any)[__COMMENTS_KEY__] || {} }
 
     source.forEach((v, k) => {
       res += writeComments(comments[k], INDENT2, NEW_LINE)
@@ -53,10 +51,19 @@ const __js2plist__ = (source: any, indent: string, deep: number): string => {
     res += writeComments(comments[__EMPTY__], INDENT2, NEW_LINE)
     res =
       '<' + __ARRAY__ + '>' + NEW_LINE + res + INDENT + '</' + __ARRAY__ + '>'
+  } else if (typeof source === 'number') {
+    res = wrapValue(
+      source === parseInt('' + source, 10) ? __INTEGER__ : __REAL__,
+      source
+    )
+  } else if (typeof source === 'boolean') {
+    res = wrapValue(__EMPTY__, source, true)
+  } else if (source instanceof Date) {
+    res = wrapValue(__DATE__, source.toISOString())
   } else if (source && source[__BINARY64_KEY__]) {
     res = wrapValue(__DATA__, source[__BINARY64_KEY__])
   } else if (isObject(source)) {
-    const comments: any = { ...((source as any)[__COMMENTS_KEY__] || {}) }
+    const comments: any = { ...(source as any)[__COMMENTS_KEY__] || {} }
 
     keys(source).forEach((k) => {
       if (k !== __COMMENTS_KEY__) {
@@ -68,15 +75,6 @@ const __js2plist__ = (source: any, indent: string, deep: number): string => {
 
     res += writeComments(comments[__EMPTY__], INDENT2, NEW_LINE)
     res = '<' + __DICT__ + '>' + NEW_LINE + res + INDENT + '</' + __DICT__ + '>'
-  } else if (instanceOf(source, Number)) {
-    res = wrapValue(
-      source === parseInt(source) ? __INTEGER__ : __REAL__,
-      source
-    )
-  } else if (instanceOf(source, Date)) {
-    res = wrapValue(__DATE__, source.toISOString())
-  } else if (instanceOf(source, Boolean)) {
-    res = wrapValue(__EMPTY__, source, true)
   } else {
     res = wrapValue(__STRING__, normalizeString(source))
   }
