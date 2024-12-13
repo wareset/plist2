@@ -83,7 +83,7 @@ const __js2plist__ = (source: any, indent: string, deep: number): string => {
 }
 
 // prettier-ignore
-export default (source: string, indent: number | string = 2): string =>
+export default (source: any, indent: number | string = 2): string =>
   [
     '<?xml version="1.0" encoding="UTF-8"?>',
     '<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">',
